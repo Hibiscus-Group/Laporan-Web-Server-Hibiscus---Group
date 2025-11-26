@@ -1,231 +1,330 @@
-# Laporan-Web-Server-Hibiscus---Group
-Dibuat untuk memenuhi tugas KKTKJ (Pak Asep) mengenai materi Web Server berbasis Nginx.
-1. Akses Server
-A. Akses Menggunakan SSH Client
-a) CMD (SSH)
+# Laporan Web Server Nginx - Hibiscus 
 
-Untuk masuk ke server, gunakan:
+ ## **👥 Anggota Kelompok — Hibiscus Group**
 
+* **Alya Destiani – 5**
+* **Nasya Adinda Rahayu – 21**
+* **Nazril Gunawan – 22**
+* **Putri Marlina – 24**
+
+---
+
+# **1. Akses Server**
+
+## **A. Akses Menggunakan SSH Client**
+
+---
+
+### **a) CMD / Terminal (SSH)**
+
+```bash
 ssh kahiang@<ip-server>
+```
 
+> **⚠️ CATATAN:**
+>
+> * Tidak dapat login sebagai **root** (dibatasi oleh server).
+> * Gunakan `sudo` untuk menjalankan perintah penting.
 
-Catatan:
+Contoh:
 
-Tidak bisa login sebagai root.
-
-Gunakan sudo untuk tindakan yang membutuhkan akses root, misalnya:
-
+```bash
 sudo apt install php
 sudo nano /var/www/html/index.php
+```
 
-b) WinSCP
+---
 
-Karena tidak dapat login sebagai root, akun kahiang perlu diset agar tetap bisa mengakses file root saat transfer.
+### **b) WinSCP**
 
-Masukkan:
+Gunakan akun **kahiang** karena root tidak dapat login langsung.
 
-Host Name: Hibicus
+**Pengaturan WinSCP:**
 
-User: kahiang
+| Field     | Isi         |
+| --------- | ----------- |
+| Host Name | Hibicus     |
+| User      | kahiang     |
+| Password  | @kahiang123 |
 
-Password: @kahiang123
+Masuk ke:
+**Advanced → Environment → SFTP**
+Isi:
 
-Lalu:
-Advanced → Environment → SFTP
-Isi SFTP Server dengan:
-
+```
 sudo /usr/lib/openssh/sftp-server
+```
 
+> **💡 TIPS:**
+> Jika edit file tidak tersimpan, pastikan kamu menggunakan **Save (Ctrl+S)** di editor internal WinSCP, bukan hanya *Close*.
 
-Klik OK, lalu Login.
+---
 
-c) CMD (Akses Biasa)
+### **c) CMD (Akses Biasa)**
 
-Sama seperti SSH biasa:
+```bash
+ssh kahiang@<ip-server>
+```
 
-ssh kahiang@ipserver
+> **⚠️ INGAT:** Perintah yang butuh akses tinggi tetap memakai `sudo`.
 
+---
 
-Setiap perintah penting tetap menggunakan sudo.
+## **B. WinSCP untuk Edit & Transfer File**
 
-B. WinSCP untuk Edit & Transfer File
+WinSCP memudahkan proses upload, edit, dan pemindahan file tanpa harus menulis banyak perintah terminal.
 
-WinSCP memudahkan kami meng-upload, memindahkan, atau mengedit file tanpa harus mengetik banyak perintah di terminal yang kadang bikin pusing 😅.
+> **💡 TIPS:**
+> Gunakan fitur **Edit → Keep remote directory up to date** untuk upload otomatis bila perlu.
 
-C. Instalasi & Koneksi Web Server
+---
 
-Pastikan Debian sudah punya IP dan bisa diakses.
+## **C. Instalasi & Koneksi Web Server**
 
-Repository sudah aktif.
+* Pastikan Debian sudah memiliki IP.
+* Repository aktif.
+* Server dapat di-ping dari LAN.
 
-Tes koneksi server dari LAN.
+---
 
-2. Konfigurasi Dasar Nginx
+# **2. Konfigurasi Dasar Nginx**
 
 Update package:
 
+```bash
 apt update && apt upgrade
+```
 
+Instal:
 
-Instal Nginx:
-
+```bash
 apt install nginx
+```
 
+Aktifkan:
 
-Jalankan dan aktifkan:
-
+```bash
 systemctl start nginx
 systemctl enable nginx
+```
 
+Cek:
 
-Cek status:
-
+```bash
 systemctl status nginx
+```
 
+Akses browser:
+➡️ **[http://ip-server](http://ip-server)**
 
-Buka http://ip-server
-Jika muncul Welcome to Nginx!, berarti server berhasil berjalan.
+> **💡 TIPS:**
+> Jika tampilan tidak muncul, cek apakah firewall mengizinkan port 80.
 
-3. Instal & Uji PHP pada Nginx
-A. Instalasi PHP-FPM
+---
+
+# **3. Instal & Uji PHP pada Nginx**
+
+## **A. Instalasi PHP-FPM**
+
+```bash
 apt install php8.4-fpm php8.4-cli
-
+```
 
 Cek status:
 
+```bash
 systemctl status php8.4-fpm
+```
 
-B. Konfigurasi Nginx untuk PHP
+---
+
+## **B. Konfigurasi Nginx untuk PHP**
 
 Backup file bawaan:
 
+```bash
 mv /etc/nginx/sites-available/default /etc/nginx/sites-available/default.asli
+```
 
+Edit konfigurasi:
 
-Edit file baru:
-
+```bash
 nano /etc/nginx/sites-available/default
+```
 
+Setelah selesai:
 
-Isi konfigurasi seperti contoh (tetap versi lengkap, hanya dirapikan agar mudah dibaca).
-
-Setelah itu:
-
+```bash
 nginx -t
 systemctl restart nginx
+```
 
-C. Uji PHP
+> **❗ LARANGAN:**
+> Jangan menggunakan tab ganda dalam konfigurasi Nginx. Gunakan **spasi**, karena indent salah → error.
 
-Buat file uji:
+---
 
+## **C. Uji PHP**
+
+```bash
 nano /var/www/html/info.php
-
+```
 
 Isi:
 
+```php
 <?php phpinfo(); ?>
+```
 
+Akses:
+➡️ **[http://ip-server/info.php](http://ip-server/info.php)**
 
-Buka browser:
-http://ip-server/info.php
+---
 
-Jika informasi PHP muncul, berarti Nginx dan PHP sudah terhubung dengan baik.
+# **4. Menambahkan SSL Self-Signed**
 
-4. Menambahkan SSL Self-Signed
-A. Membuat Sertifikat
+## **A. Membuat Sertifikat**
+
+```bash
 mkdir /etc/ssl/nginx
 apt install openssl
 openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
 -keyout /etc/ssl/nginx/selfsigned.key \
 -out /etc/ssl/nginx/selfsigned.crt
+```
 
-B. Tambahkan SSL ke Konfigurasi Nginx
+> **⚠️ CATATAN:**
+> Isi data di prompt OpenSSL boleh asal, karena *self-signed* tidak diverifikasi publik.
 
-Edit kembali:
+---
 
+## **B. Konfigurasi HTTPS di Nginx**
+
+Edit:
+
+```bash
 nano /etc/nginx/sites-available/default
+```
 
+Tambahkan konfigurasi port **443**.
 
-Tambahkan konfigurasi untuk HTTPS (port 443).
+Restart:
 
-Cek & restart:
-
+```bash
 nginx -t
 systemctl restart nginx
-
+```
 
 Akses:
-https://ip-server
- (103.59.94.221)
-Jika muncul “Not Secure”, klik Advanced → Proceed.
-Buat file index.php sebagai tampilan awal website.
+➡️ **[https://ip-server](https://ip-server)**
 
-5. Kelebihan & Kekurangan Nginx
+> **💡 TIPS:**
+> Browser akan memberi warning *Not Secure* → klik **Advanced → Proceed**.
 
-Kelebihan:
+---
 
-🔹 Performa tinggi tapi ringan, cocok untuk koneksi banyak.
+# **5. Kelebihan & Kekurangan Nginx**
 
-🔹 Sangat stabil (jarang perlu restart).
+## **🌟 Kelebihan**
 
-🔹 Cepat untuk file statis seperti HTML/CSS.
+* Performa tinggi & ringan.
+* Stabil (jarang perlu restart).
+* Cepat dalam menyajikan file statis.
+* Hemat CPU & RAM.
 
-🔹 Hemat resource CPU & RAM.
+## **⚠️ Kekurangan**
 
-Kekurangan:
+* Modul tidak bisa di-*reload* secara dinamis.
+* Kurva belajar cukup tinggi.
+* Cenderung kurang fleksibel untuk aplikasi lama.
 
-🔸 Modul tidak bisa ditambah secara dinamis.
+---
 
-🔸 Kurva belajar cukup tinggi untuk pemula (kami merasakan betul ini 😅).
+# **6. Perjalanan Project Website**
 
-🔸 Fitur agak terbatas untuk aplikasi lama.
+## **A. Pembuatan Project Kelompok**
 
-6. Perjalanan Project Website
-A. Pembuatan Project Kelompok
+Tema dipilih menggunakan warna **#006994**, konsep formal dengan animasi ringan.
 
-Awalnya kami berdiskusi mencari tema. Setelah beberapa ide, kami memilih tema warna #006994, nuansa formal, dan sedikit animasi supaya tampilan tetap fresh tapi tetap resmi ✨.
+AI membantu memberikan ide desain, tetapi penulisan & struktur dilakukan manual.
 
-Kami dibantu AI untuk ide desain, tapi pengetikan dan penyusunan syntax tetap kami lakukan sendiri.
-Kesulitannya muncul saat mencoba mengedit file melalui WinSCP karena tidak langsung tersimpan—kami belum memahami cara kerjanya waktu itu.
+> **💡 TIPS:**
+> Gunakan *live preview* HTML untuk memudahkan debugging tampilan.
 
-Akhirnya kami pindah ke CMD dulu, sebelum akhirnya paham WinSCP berkat penjelasan teman lintas kelompok (makasih bangett 🫶).
-Setelah semua proses itu, tampilan index akhirnya berhasil dibuat sesuai rencana—yeay! 🎉
+Kendala muncul pada WinSCP yang tidak menyimpan file → akhirnya pindah ke CMD.
+Setelah belajar dari teman lintas kelompok, baru paham cara kerja WinSCP 😆.
 
-B. Upload Project ke Server
+Akhirnya tampilan awal website berhasil!
 
-Pemindahan file dilakukan via WinSCP agar lebih mudah. Ada tantangan kecil, tapi bisa diatasi.
+---
 
-C. Pembuatan Project Individu
+## **B. Upload Project ke Server**
 
-Alya Destiani – 5
+Transfer dilakukan melalui WinSCP.
+Beberapa error kecil muncul, tetapi dapat diselesaikan.
 
-Nasya Adinda Rahayu – 21
-Awalnya sempat bingung tentang konsep file pribadi tiap anggota agar bisa dipanggil di web. Untungnya, teman lintas kelompok menjelaskan dengan rinci sehingga kami langsung “ngeh”.
+---
 
-Nazril Gunawan – 22
+## **C. Pembuatan Project Individu**
 
-Putri Marlina –
+* **Alya Destiani – 5**
+* **Nasya Adinda Rahayu – 21**
+* **Nazril Gunawan – 22**
+* **Putri Marlina – 24**
 
-Setiap anggota kemudian membuat halaman dengan tema yang sama agar terlihat selaras (begitchuu 😆).
+Awalnya bingung membuat file pribadi yang bisa dipanggil dari index.
+Beruntung dapat penjelasan dari teman lintas kelompok sehingga langsung paham.
 
-7. Kendala & Solusi yang Kami Alami
-a. Kesulitan Memahami Perintah
+Setiap anggota membuat halaman dengan tema seragam agar rapi dan selaras.
 
-Pada awalnya, beberapa perintah di tutorial LMS terasa asing, sehingga kami agak kebingungan.
-Solusi: bertanya ke AI dan diskusi bareng teman sampai paham sedikit demi sedikit.
+---
 
-b. Bingung Menggunakan WinSCP
+# **7. Kendala & Solusi**
 
-Kami sempat kesulitan saat mencoba edit file lewat WinSCP karena tidak langsung tersimpan.
-Solusi: setelah dijelaskan oleh teman lintas kelompok, kami akhirnya paham fungsi WinSCP dan jadi lebih mudah.
+## **a. Kesulitan Memahami Perintah**
 
-c. Website Tidak Muncul Setelah Dipindah
+Beberapa perintah terasa asing.
 
-Ternyata Apache masih aktif sehingga bentrok dengan Nginx.
-Solusi: menonaktifkan Apache dan menjalankan kembali Nginx.
+> **Solusi:**
+> Diskusi dengan teman + bantuan AI → paham pelan-pelan.
 
-d. File Website Individu Tidak Terpanggil
+---
 
-Hal ini terjadi karena ada dua file dalam satu folder pribadi. Server bingung memanggil yang mana.
-Solusi: menghapus file yang tidak dipakai.
-Akhirnya bisa jalan berkat bantuan teman lintas kelompok (lagi?). ❤️
+## **b. Bingung Menggunakan WinSCP**
+
+Edit file tidak tersimpan.
+
+> **Solusi:**
+> Menggunakan mode editor internal WinSCP yang benar.
+
+---
+
+## **c. Website Tidak Muncul Setelah Dipindah**
+
+Masalah: **Apache masih berjalan, bentrok dengan Nginx**.
+
+```bash
+systemctl stop apache2
+systemctl disable apache2
+systemctl restart nginx
+```
+
+---
+
+## **d. File Website Individu Tidak Terpanggil**
+
+Ada **dua file index** dalam satu folder.
+
+> **Solusi:**
+> Hapus file yang tidak dipakai → server bisa memanggil yang benar.
+
+ # **📌 Kesimpulan**
+
+Pengerjaan proyek web server berbasis **Nginx di Debian** memberikan banyak pengalaman teknis sekaligus pembelajaran baru bagi kelompok kami. Kami belajar bagaimana mengakses server menggunakan SSH dan WinSCP, melakukan instalasi layanan seperti **Nginx**, **PHP-FPM**, serta membuat **SSL self-signed** untuk koneksi HTTPS.
+
+Meskipun menghadapi beberapa kendala — seperti bentroknya layanan Apache, file yang tidak tersimpan di WinSCP, hingga kesalahan struktur folder — setiap masalah dapat diselesaikan melalui diskusi, percobaan, dan bantuan teman lintas kelompok. Seluruh proses ini membuat kami lebih paham cara kerja server dan konfigurasi web secara nyata.
+
+Akhirnya, website kelompok dan halaman individu setiap anggota dapat berjalan dengan baik di server. Melalui tugas ini, kami menyadari pentingnya ketelitian, kerja sama, serta pemahaman dasar sistem Linux untuk membangun web server yang stabil dan fungsional.
+
+> **Kesimpulan Akhir:**
+> Tugas ini tidak hanya melatih kemampuan teknis, tetapi juga meningkatkan kemampuan kolaborasi dan pemecahan masalah dalam membangun dan mengelola sebuah web server profesional.
