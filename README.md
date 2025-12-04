@@ -330,6 +330,6 @@ Akhirnya, website kelompok dan halaman individu setiap anggota dapat berjalan de
 > Tugas ini tidak hanya melatih kemampuan teknis, tetapi juga meningkatkan kemampuan kolaborasi dan pemecahan masalah dalam membangun dan mengelola sebuah web server profesional.
 
 ## 🎬 Dokumentasi Video Pengerjaan
-[![Thumbnail Video Pengerjaan](https://img.youtube.com/vi/zErzzyqL34E/0.jpg)](https://youtu.be/zErzzyqL34E)
+[![Thumbnail Video Pengerjaan](https://img.youtube.com/vi/6CTRWvtc95A?si=BLBRYXNvOaDBQNhW.jpg)](https://youtu.be/6CTRWvtc95A?si=BLBRYXNvOaDBQNhW)
 
 ~ Kelompok 8 - Hibiscus - XI TJKT ~
